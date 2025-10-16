@@ -16,7 +16,7 @@ A production-ready microservices architecture built with Go, featuring user mana
 ## Architecture
 
 ```
-Client → Load Balancer (Nginx) → Node Instances → APIs → Database
+Client → Load Balancer (Nginx) (NOT APPLIED) → Node Instances → APIs → Database
                                       ├── User API
                                       ├── File API
                                       └── Audit API

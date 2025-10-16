@@ -55,29 +55,6 @@ go run main.go
 
 Server starts on `http://localhost:8080`
 
-### Docker Deployment
-
-1. **Build and run**
-```bash
-make docker-run
-# or
-docker-compose up -d
-```
-
-2. **View logs**
-```bash
-make docker-logs
-# or
-docker-compose logs -f
-```
-
-3. **Stop services**
-```bash
-make docker-stop
-# or
-docker-compose down
-```
-
 ## API Endpoints
 
 ### Authentication

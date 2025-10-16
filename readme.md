@@ -29,8 +29,7 @@ Client → Load Balancer (Nginx) → Node Instances → APIs → Database
 ### Prerequisites
 
 - Go 1.21 or higher
-- Docker & Docker Compose (optional)
-- Make (optional)
+
 
 ### Local Development
 
@@ -203,21 +202,6 @@ JWT_SECRET=your-very-secure-random-secret-min-32-chars
 STORAGE_PATH=/var/app/storage
 ```
 
-## Project Structure
-
-```
-.
-├── main.go              # Main application entry point
-├── go.mod               # Go dependencies
-├── go.sum               # Dependency checksums
-├── Dockerfile           # Container build instructions
-├── docker-compose.yml   # Multi-container setup
-├── nginx.conf           # Load balancer configuration
-├── Makefile            # Build automation
-├── README.md           # This file
-└── storage/            # File storage directory
-```
-
 ## Architecture Components
 
 ### Security Controller
@@ -281,75 +265,6 @@ services:
     # Load balances across all instances
 ```
 
-### AWS Deployment
-
-1. **Replace in-memory DB with DynamoDB**:
-```go
-// Add AWS SDK
-import (
-    "github.com/aws/aws-sdk-go-v2/config"
-    "github.com/aws/aws-sdk-go-v2/service/dynamodb"
-)
-
-// Initialize DynamoDB client
-cfg, _ := config.LoadDefaultConfig(context.TODO())
-dynamoClient := dynamodb.NewFromConfig(cfg)
-```
-
-2. **Replace local storage with S3**:
-```go
-import "github.com/aws/aws-sdk-go-v2/service/s3"
-
-s3Client := s3.NewFromConfig(cfg)
-// Use PutObject and GetObject instead of file system
-```
-
-3. **Deploy to ECS/EKS**:
-- Build Docker image
-- Push to ECR
-- Create ECS task definition
-- Set up Application Load Balancer
-- Configure auto-scaling
-
-## Security Best Practices
-
-✅ **Implemented:**
-- JWT token expiration (24 hours)
-- Bcrypt password hashing (cost 14)
-- Authorization middleware
-- CORS configuration
-- Request size limits
-- Timeout protection
-- Input validation
-
-⚠️ **Production Recommendations:**
-- Use HTTPS/TLS in production
-- Implement rate limiting per IP/user
-- Add request signing for API-to-API calls
-- Enable audit log encryption at rest
-- Set up log aggregation (ELK, CloudWatch)
-- Implement token refresh mechanism
-- Add API key management for service accounts
-- Use secrets manager for JWT_SECRET
-- Enable database encryption
-- Implement OWASP security headers
-
-## Testing
-
-```bash
-# Run all tests
-make test
-
-# Run with coverage
-go test -cover ./...
-
-# Run benchmarks
-make benchmark
-
-# Load testing with Apache Bench
-ab -n 1000 -c 10 http://localhost:8080/health
-```
-
 ## Monitoring
 
 ### Health Check
@@ -365,42 +280,13 @@ Response:
 }
 ```
 
-### Metrics (Add Prometheus)
+### Metrics
 ```go
 // Add to main.go
 import "github.com/prometheus/client_golang/prometheus/promhttp"
 
 r.Handle("/metrics", promhttp.Handler())
 ```
-
-## Troubleshooting
-
-### Port already in use
-```bash
-# Kill process on port 8080
-lsof -ti:8080 | xargs kill -9
-```
-
-### Storage permission errors
-```bash
-chmod -R 755 ./storage
-```
-
-### Docker build fails
-```bash
-# Clean Docker cache
-docker system prune -a
-docker-compose build --no-cache
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
 ## License
 
 MIT License - feel free to use this in your projects!# microservices
